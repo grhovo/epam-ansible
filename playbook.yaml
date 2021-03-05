@@ -1,0 +1,54 @@
+- hosts: ubuntu
+  vars:
+    mysql_root_password: 19981120
+  tasks:
+  - name: Install all required packages
+    apt: 
+      name:
+        - mariadb-server
+        - python3-pip
+        - nginx
+        - mariadb-client
+        - php-fpm
+        - php-mysql
+      update_cache: yes
+      cache_valid_time: 3600
+      state: present
+    become: yes
+  - name: Start the MySQL service
+    become: yes
+    service: 
+      name: mariadb 
+      state: started
+      enabled: true
+  - name: "Install pymysql module"
+    become: yes
+    command: "pip3 install PyMySQL"
+
+  - name: update mysql root password for all root accounts
+    become: yes
+    mysql_user: 
+      name: root 
+      password: "{{ mysql_root_password }}"
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      check_implicit_admin: yes
+      priv: "*.*:ALL,GRANT"
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+  - name: 'create mysql user'
+    mysql_user:
+      name: 'wordpress_user'
+      password: 'my_password'
+      priv: '*.*:ALL'
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+    become: yes
+  - name: 'create mysql db'
+    mysql_db:
+      name: 'wordpress_db'
+      state: present
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+    become: yes
