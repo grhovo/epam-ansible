@@ -1,6 +1,9 @@
 - hosts: ubuntu
   vars:
     mysql_root_password: 19981120
+    db_name: wordpress_db
+    db_username: wordpress_user
+    db_user_pass: my_password
   tasks:
   - name: Install all required packages
     apt: 
@@ -37,8 +40,8 @@
       login_unix_socket: /var/run/mysqld/mysqld.sock
   - name: 'create mysql user'
     mysql_user:
-      name: 'wordpress_user'
-      password: 'my_password'
+      name: '{{ db_username }}'
+      password: '{{ db_user_pass }}'
       priv: '*.*:ALL'
       login_user: root
       login_password: "{{ mysql_root_password }}"
@@ -46,9 +49,38 @@
     become: yes
   - name: 'create mysql db'
     mysql_db:
-      name: 'wordpress_db'
+      name: '{{ db_name }}'
       state: present
       login_user: root
       login_password: "{{ mysql_root_password }}"
       login_unix_socket: /var/run/mysqld/mysqld.sock
     become: yes
+  - name: 'Send configuration file'
+    copy:
+      src: configs/wordpress_nginx
+      dest: /etc/nginx/sites-available/wordpress_nginx
+    become: yes
+  - name: 'Change hostname in config file'
+    replace:
+      path: /etc/nginx/sites-available/wordpress_nginx
+      regexp: '127.0.0.1'
+      replace: "{{ ansible_host }}"
+    become: yes
+  - name: 'remove default nginx config'
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+    become: yes
+  - name: 'create link'
+    become: yes
+    file:
+      src: /etc/nginx/sites-available/wordpress_nginx
+      dest: /etc/nginx/sites-enabled/wordpress_nginx
+      state: link
+  - name: 'restart nginx'
+    become: yes
+    service: 
+      name: nginx
+      state: restarted
+      enabled: true
+ 
