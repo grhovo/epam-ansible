@@ -83,16 +83,21 @@
       name: nginx
       state: restarted
       enabled: true
+  - name: 'Check if wordpress file exist'
+    stat: path=/var/www/wordpress
+    register: check_path
   - name: 'Download wordpress files'
     get_url:
       url: https://wordpress.org/latest.tar.gz 
       dest: /tmp/wordpress.tar.gz
+    when: not check_path.stat.exists
   - name: 'Extract files'
     unarchive:
       src: /tmp/wordpress.tar.gz
       dest: /var/www
       remote_src: yes
     become: yes
+    when: not check_path.stat.exists
   - name: 'Change ownership of file wordpress'
     file:
       path: /var/www/wordpress

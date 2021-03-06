@@ -1,1 +1,1 @@
-ubuntu ansible_ssh_host=192.168.118.129 ansible_ssh_user=hovo ansible_ssh_private_key_file=/home/devops/.ssh/id_rsa
+ubuntu ansible_ssh_host=192.168.118.135 ansible_ssh_user=hovo ansible_ssh_private_key_file=/home/devops/.ssh/id_rsa
