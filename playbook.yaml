@@ -1,9 +1,6 @@
 - hosts: ubuntu
-  vars:
-    mysql_root_password: 19981120
-    db_name: wordpress_db
-    db_username: wordpress_user
-    db_user_pass: my_password
+  vars_files:
+    - configs/vars.yaml
   tasks:
   - name: Install all required packages
     apt: 
@@ -27,55 +24,54 @@
   - name: "Install pymysql module"
     become: yes
     command: "pip3 install PyMySQL"
-
   - name: update mysql root password for all root accounts
     become: yes
     mysql_user: 
-      name: root 
+      name: "{{ mysql_root_user }}" 
       password: "{{ mysql_root_password }}"
-      login_user: root
+      login_user: "{{ mysql_root_user }}"
       login_password: "{{ mysql_root_password }}"
       check_implicit_admin: yes
       priv: "*.*:ALL,GRANT"
-      login_unix_socket: /var/run/mysqld/mysqld.sock
+      login_unix_socket: "{{ mysql_socket }}"
   - name: 'create mysql user'
     mysql_user:
       name: '{{ db_username }}'
       password: '{{ db_user_pass }}'
       priv: '*.*:ALL'
-      login_user: root
+      login_user: "{{ mysql_root_user }}"
       login_password: "{{ mysql_root_password }}"
-      login_unix_socket: /var/run/mysqld/mysqld.sock
+      login_unix_socket: "{{ mysql_socket }}"
     become: yes
   - name: 'create mysql db'
     mysql_db:
       name: '{{ db_name }}'
       state: present
-      login_user: root
+      login_user: "{{ mysql_root_user }}"
       login_password: "{{ mysql_root_password }}"
-      login_unix_socket: /var/run/mysqld/mysqld.sock
+      login_unix_socket: "{{ mysql_socket }}"
     become: yes
   - name: 'Send configuration file'
     copy:
-      src: configs/wordpress_nginx
-      dest: /etc/nginx/sites-available/wordpress_nginx
+      src: "{{ wordpress_config_path }}"
+      dest: "{{ nginx_sites_available }}"
     become: yes
   - name: 'Change hostname in config file'
     replace:
-      path: /etc/nginx/sites-available/wordpress_nginx
+      path: "{{ nginx_sites_available }}"
       regexp: '127.0.0.1'
       replace: "{{ ansible_host }}"
     become: yes
   - name: 'remove default nginx config'
     file:
-      path: /etc/nginx/sites-enabled/default
+      path: "{{ nginx_default_path }}"
       state: absent
     become: yes
   - name: 'create link'
     become: yes
     file:
-      src: /etc/nginx/sites-available/wordpress_nginx
-      dest: /etc/nginx/sites-enabled/wordpress_nginx
+      src: "{{ nginx_sites_available }}"
+      dest: "{{ nginx_sites_enabled }}"
       state: link
   - name: 'restart nginx'
     become: yes
@@ -88,13 +84,13 @@
     register: check_path
   - name: 'Download wordpress files'
     get_url:
-      url: https://wordpress.org/latest.tar.gz 
-      dest: /tmp/wordpress.tar.gz
+      url: "{{ wordpress_remote_site_path }}" 
+      dest: "{{ wordpress_local_site_path }}"
     when: not check_path.stat.exists
   - name: 'Extract files'
     unarchive:
-      src: /tmp/wordpress.tar.gz
-      dest: /var/www
+      src: "{{ wordpress_local_site_path }}"
+      dest: "{{ nginx_www }}"
       remote_src: yes
     become: yes
     when: not check_path.stat.exists
