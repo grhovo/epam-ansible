@@ -1,5 +1,6 @@
 - hosts: ubuntu
-  vars_files:
-    - configs/vars.yaml
-  tasks:
+  roles:
+    - mariadb
+    - nginx
+    - wordpress
 

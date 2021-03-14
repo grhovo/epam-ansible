@@ -19,7 +19,8 @@
       enabled: true
   - name: "Install pymysql module"
     become: yes
-    command: "pip3 install PyMySQL"
+    pip:
+      name: pymysql
   - name: update mysql root password for all root accounts
     become: yes
     mysql_user: 

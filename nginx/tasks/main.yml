@@ -15,7 +15,6 @@
     template:
       src: "{{ wordpress_config_path }}"
       dest: "{{ nginx_sites_available }}"
-      state: present
     become: yes
   - name: 'remove default nginx config'
     file:
