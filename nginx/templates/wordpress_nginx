@@ -6,7 +6,7 @@ server {
 
         index index.php;
 
-        server_name 127.0.0.1;
+        server_name {{ ansible_host }};
 
         location / {
                 try_files $uri $uri/ =404;

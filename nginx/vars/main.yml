@@ -1,0 +1,4 @@
+---
+# vars file for nginx
+ansible_sudo_pass: 19981120
+wordpress_config_path: wordpress_nginx
