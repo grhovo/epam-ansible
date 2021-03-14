@@ -1,4 +1,4 @@
 Ansible-playbook to create wordpress site
-To run playbook, add your host in hosts file and make sure you've keys for connection
+Add your host in hosts file and make sure you've keys for connection, and check variables that need to specify in roles
 To run playbook, use
-ansible-playbook -i hosts playbook.yaml --extra-vars "ansible_sudo_pass=yoursudopassword"
+ansible-playbook -i hosts playbook.yaml 

@@ -1,0 +1,3 @@
+---
+# vars file for wordpress
+ansible_sudo_pass: 19981120
