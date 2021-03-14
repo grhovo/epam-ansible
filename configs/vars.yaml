@@ -9,8 +9,7 @@ db_user_pass: my_password
 mysql_socket: /var/run/mysqld/mysqld.sock
 
 wordpress_config_path: configs/wordpress_nginx
-wordpress_remote_site_path: https://wordpress.org/latest.tar.gz 
-wordpress_local_site_path: /tmp/wordpress.tar.gz
+
 nginx_www: /var/www
 nginx_sites_available: /etc/nginx/sites-available/wordpress_nginx
 nginx_sites_enabled: /etc/nginx/sites-enabled/wordpress_nginx
