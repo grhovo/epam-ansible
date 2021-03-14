@@ -22,3 +22,11 @@
       path: "{{ nginx_default_path }}"
       state: absent
     become: yes
+  - name: 'create link'
+    become: yes
+    file:
+      src: "{{ nginx_sites_available }}"
+      dest: "{{ nginx_sites_enabled }}"
+      state: link
+    notify:
+      - Restart nginx

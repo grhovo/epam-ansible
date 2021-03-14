@@ -1,4 +1,3 @@
 ---
 # defaults file for nginx
-nginx_sites_available: /etc/nginx/sites-available/wordpress_nginx
 nginx_default_path: /etc/nginx/sites-enabled/default

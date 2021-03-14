@@ -2,18 +2,6 @@
   vars_files:
     - configs/vars.yaml
   tasks:
-  - name: 'create link'
-    become: yes
-    file:
-      src: "{{ nginx_sites_available }}"
-      dest: "{{ nginx_sites_enabled }}"
-      state: link
-  - name: 'restart nginx'
-    become: yes
-    service: 
-      name: nginx
-      state: restarted
-      enabled: true
   - name: 'Check if wordpress file exist'
     stat: path=/var/www/wordpress
     register: check_path
