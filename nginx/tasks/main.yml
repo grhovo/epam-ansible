@@ -28,4 +28,4 @@
       dest: "{{ nginx_sites_enabled }}"
       state: link
     notify:
-      - Restart nginx
+      - restart nginx

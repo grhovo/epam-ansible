@@ -21,3 +21,10 @@
       owner: www-data
       group: www-data
     become: yes
+  - name: 'Configure wordpress with template'
+    template:
+      src: wp-config.php
+      dest: "{{ wordpress_php_remote }}"
+    become: yes
+    notify:
+      - restart nginx
