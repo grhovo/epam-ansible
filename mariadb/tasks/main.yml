@@ -4,6 +4,7 @@
   - name: Install all required packages
     apt: 
       name:
+        - python3
         - mariadb-server
         - python3-pip
         - mariadb-client

@@ -105,6 +105,7 @@ resource "local_file" "private_key" {
   content         = tls_private_key.worpdress_ssh.private_key_pem
   filename        = "wordrpess_key.pem"
   file_permission = "0600"
+  directory_permission = "0600"
 }
 
 # Create virtual machine
@@ -137,4 +138,8 @@ resource "azurerm_linux_virtual_machine" "wordpress" {
     public_key = tls_private_key.worpdress_ssh.public_key_openssh
   }
 
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -i hosts ../playbook.yaml"
+  }
 }
