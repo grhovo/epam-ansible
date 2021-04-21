@@ -35,7 +35,7 @@ resource "azurerm_public_ip" "public_ip" {
   name                = var.public_ip_name
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
 
 }
 
@@ -140,6 +140,6 @@ resource "azurerm_linux_virtual_machine" "wordpress" {
 
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i hosts ../playbook.yaml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts ../playbook.yaml"
   }
 }
